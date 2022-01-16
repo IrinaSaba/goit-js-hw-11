@@ -2,6 +2,8 @@ import './sass/main.scss';
 import Notiflix from 'notiflix';
 import fetchAnimals from './fetchAnimals';
 import renderCardAnimals from './renderCardAnimals';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const warning = 'Sorry, there are no images matching your search query. Please try again.';
 const notiflixWarning = Notiflix.Notify.failure;

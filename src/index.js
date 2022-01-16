@@ -1,55 +1,43 @@
-import './css/styles.css';
-import debounce from 'lodash.debounce';
+import './sass/main.scss';
 import Notiflix from 'notiflix';
-import fetchCountries from './fetchCountries';
-import renderCountries from './renderCountries';
-import renderCountry from './renderCountry';
+import fetchAnimals from './fetchAnimals';
+import renderCardAnimals from './renderCardAnimals';
 
-const DEBOUNCE_DELAY = 300;
-const info = 'Too many matches found. Please enter a more specific name.';
-const warning = 'Oops, there is no country with that name';
+const warning = 'Sorry, there are no images matching your search query. Please try again.';
 const notiflixWarning = Notiflix.Notify.failure;
-const notiflixInfo = Notiflix.Notify.info;
+const notiflixInfo = Notiflix.Notify.success;
 
 const refs = {
-  searchCountry: document.querySelector('#search-box'),
-  countryList: document.querySelector('.country-list'),
-  countryInfo: document.querySelector('.country-info'),
+  form: document.querySelector('form'),
+  listOfCards: document.querySelector('.gallery'),
 };
 
-refs.searchCountry.addEventListener('input', debounce(inputCountry, DEBOUNCE_DELAY));
+refs.form.addEventListener('submit', searchSubmit);
 
-function inputCountry(event) {
+function searchSubmit(event) {
   event.preventDefault();
-  const inputCountry = event.target.value.trim();
-  // console.log(inputCountry);
-  if (!inputCountry) {
-    refs.countryList.innerHTML = '';
-    refs.countryInfo.innerHTML = '';
+  const {
+    elements: { searchQuery },
+  } = event.currentTarget;
+  const searchAnimal = searchQuery.value.trim();
+  if (!searchAnimal) {
+    renderMarkup(refs.listOfCards, '');
     return;
   }
-  fetchCountries(inputCountry)
-    .then(countries => {
-      // console.log(countries);
-      if (countries.length === 1) {
-        renderMarkup(refs.countryInfo, renderCountry(countries));
-        renderMarkup(refs.countryList, '');
-        return;
-      }
-      if (countries.length > 1 && countries.length <= 10) {
-        renderMarkup(refs.countryList, renderCountries(countries));
-        renderMarkup(refs.countryInfo, '');
-        return;
-      }
-      if (countries.length > 10) {
-        notiflixInfo(info);
-        refs.countryList.innerHTML = '';
-        refs.countryInfo.innerHTML = '';
-        // console.log(notiflixInfo(info));
-        return;
-      }
-    })
-    .catch(error => notiflixWarning(warning));
+
+  fetchAnimals(searchAnimal).then(animals => {
+    // console.log(animals.hits.length);
+    if (animals.hits.length !== 0) {
+      renderMarkup(refs.listOfCards, renderCardAnimals(animals.hits));
+      notiflixInfo(`Hooray! We found ${animals.totalHits} images.`);
+      return;
+    }
+    if (animals.hits.length === 0) {
+      notiflixWarning(warning);
+      renderMarkup(refs.listOfCards, '');
+      return;
+    }
+  });
 }
 
 function renderMarkup(where, what) {

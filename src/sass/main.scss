@@ -1,3 +1,6 @@
+body {
+  text-align: center;
+}
 header {
   background-color: blueviolet;
   height: 100px;
@@ -43,4 +46,10 @@ button {
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
+}
+
+.load-more {
+  padding: 10px;
+  background-color: blueviolet;
+  color: white;
 }

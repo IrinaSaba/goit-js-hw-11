@@ -3,7 +3,7 @@ export default function renderCardAnimals(listOfAnimals) {
     .map(animalCard => {
       // console.log(animalCard);
       return `<div class="photo-card">
-                <img src="${animalCard.webformatURL}" alt="${animalCard.tags}" loading="lazy" width="350" height="200"/>
+                <img src="${animalCard.webformatURL}" alt="${animalCard.tags}" loading="lazy" width="300" height="200"/>
                   <div class="info">
                       <p class="info-item">
                         <b>Likes</b>

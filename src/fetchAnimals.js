@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Notiflix from 'notiflix';
 
 export default async function fetchAnimals(animals, page) {
   try {

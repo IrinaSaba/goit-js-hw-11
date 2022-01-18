@@ -39,6 +39,7 @@ async function searchSubmit(event) {
   // console.log(animals.hits.length);
   if (animals.hits.length !== 0) {
     renderMarkup(refs.listOfCards, renderCardAnimals(animals.hits));
+    let lightBox = new SimpleLightbox('.gallery a');
     notiflixInfo(`Hooray! We found ${animals.totalHits} images.`);
     refs.searchMore.classList.remove('is-hidden');
     return;
@@ -56,6 +57,7 @@ refs.searchMore.addEventListener('click', async event => {
 
   const animals = await fetchAnimals(searchAnimal, page);
   renderMarkup(refs.listOfCards, renderCardAnimals(animals.hits));
+  let lightBox = new SimpleLightbox('.gallery a');
 
   const totalPages = `${animals.totalHits}` / 40;
   if (page > totalPages) {

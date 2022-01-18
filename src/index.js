@@ -10,7 +10,7 @@ const end = "We're sorry, but you've reached the end of search results.";
 const notiflixFailure = Notiflix.Notify.failure;
 const notiflixInfo = Notiflix.Notify.success;
 const notiflixWarning = Notiflix.Notify.warning;
-let page = 1;
+let page;
 let searchAnimal = '';
 
 const refs = {
@@ -22,7 +22,7 @@ const refs = {
 
 refs.form.addEventListener('submit', searchSubmit);
 
-function searchSubmit(event) {
+async function searchSubmit(event) {
   event.preventDefault();
   page = 1;
   const {
@@ -35,36 +35,34 @@ function searchSubmit(event) {
     return;
   }
 
-  fetchAnimals(searchAnimal, page).then(animals => {
-    // console.log(animals.hits.length);
-    if (animals.hits.length !== 0) {
-      renderMarkup(refs.listOfCards, renderCardAnimals(animals.hits));
-      notiflixInfo(`Hooray! We found ${animals.totalHits} images.`);
-      refs.searchMore.classList.remove('is-hidden');
-      return;
-    }
-    if (animals.hits.length === 0) {
-      notiflixFailure(warning);
-      renderMarkup(refs.listOfCards, '');
-      return;
-    }
-  });
+  const animals = await fetchAnimals(searchAnimal, page);
+  // console.log(animals.hits.length);
+  if (animals.hits.length !== 0) {
+    renderMarkup(refs.listOfCards, renderCardAnimals(animals.hits));
+    notiflixInfo(`Hooray! We found ${animals.totalHits} images.`);
+    refs.searchMore.classList.remove('is-hidden');
+    return;
+  }
+  if (animals.hits.length === 0) {
+    notiflixFailure(warning);
+    renderMarkup(refs.listOfCards, '');
+    return;
+  }
 }
 
-refs.searchMore.addEventListener('click', event => {
+refs.searchMore.addEventListener('click', async event => {
   event.preventDefault();
   page += 1;
 
-  fetchAnimals(searchAnimal, page).then(animals => {
-    renderMarkup(refs.listOfCards, renderCardAnimals(animals.hits));
+  const animals = await fetchAnimals(searchAnimal, page);
+  renderMarkup(refs.listOfCards, renderCardAnimals(animals.hits));
 
-    const totalPages = `${animals.totalHits}` / 40;
-    if (page > totalPages) {
-      notiflixWarning(end);
-      refs.searchMore.classList.add('is-hidden');
-      return;
-    }
-  });
+  const totalPages = `${animals.totalHits}` / 40;
+  if (page > totalPages) {
+    notiflixWarning(end);
+    refs.searchMore.classList.add('is-hidden');
+    return;
+  }
 });
 
 function renderMarkup(where, what) {
